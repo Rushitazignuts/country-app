@@ -1,0 +1,17 @@
+<!-- dialog for chosen country data -->
+<mat-card class="cursor-pointer p-3" appearance="outlined">
+    <mat-card-header class="d-flex justify-content-between">
+        <mat-card-title class="text-xl my-2">{{data.country.name.common }}</mat-card-title>
+        <div (click)="closeDialog()">
+            <mat-icon>cancel</mat-icon>
+
+          </div>
+    </mat-card-header>
+    <mat-card-content>
+        <p><strong>Region:</strong> {{ data.country.region }}</p>
+        <p><strong>Capital:</strong> {{ data.country.capital }}</p>
+        <p><strong>Continent:</strong> {{ data.country.continents }}</p>
+        <p><strong>Population:</strong> {{ data.country.population }}</p>
+        <p><strong>Timezone:</strong> {{ data.country.timezones }}</p>
+    </mat-card-content>
+</mat-card>

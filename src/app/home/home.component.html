@@ -1,0 +1,23 @@
+<!-- search input field -->
+<div class="p-4 w-50">
+    <mat-form-field appearance="outline" class="w-50">
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" placeholder="Search by name, capital...">
+    </mat-form-field>
+</div>
+
+<!-- country data  listing -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+    <mat-card *ngFor="let country of filteredCountries$ | async" (click)="openCountryDetail(country)"
+        class="cursor-pointer" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title class="text-xl my-2">{{ country.name.common }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p><strong>Region:</strong> {{ country.region }}</p>
+            <p><strong>Capital:</strong> {{ country.capital }}</p>
+            <p><strong>Continent:</strong> {{ country.continents }}</p>
+            <p><strong>Population:</strong> {{ country.population }}</p>
+            <p><strong>Timezone:</strong> {{ country.timezones }}</p>
+        </mat-card-content>
+    </mat-card>
+</div>

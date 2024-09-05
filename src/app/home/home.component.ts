@@ -1,18 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Country } from '../models/country.model';
-import { loadCountries, selectCountry } from '../store/country.action';
+import {
+  loadCountries,
+  selectCountry,
+  searchCountriesByName,
+  searchCountriesByCapital,
+} from '../store/country.action';
+import {
+  selectAllCountries,
+  selectFilteredCountries,
+  selectCountryByName,
+} from '../store/country.selector';
 import { CountryDetailComponent } from '../country-detail/country-detail.component';
-import { CountryService } from '../services/country.service';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { selectAllCountries } from '../store/country.selector';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-home',
@@ -23,64 +34,94 @@ import { selectAllCountries } from '../store/country.selector';
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatRadioModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  countries$: Observable<Country[]> = this.countryService.getAllCountries();
-  filteredCountries$: Observable<Country[]> = this.countries$;
+  disabled: boolean = false;
+  checked: boolean = false;
+  isTableView: boolean = false;
+  countries$: Observable<Country[]> = this.store.select(selectAllCountries);
+  filteredCountries$: Observable<Country[] | any> = this.countries$;
   searchTerm: string = '';
+  displayedColumns: string[] = [
+    'name',
+    'region',
+    'capital',
+    'continents',
+    'population',
+  ];
+  searchBy: 'name' | 'capital' = 'name';
+  routeSub: any;
 
   constructor(
     private store: Store,
-    private countryService: CountryService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    // Load countries from store dispatch
+    // Load countries from store
     this.store.dispatch(loadCountries());
-    // this.countries$ = this.store.select(selectAllCountries);
 
-    //  filtered countries
-    this.filteredCountries$ = this.countries$;
-
-    // Handle search
-    this.filteredCountries$ = this.countryService.searchCountries(
-      this.searchTerm
-      );
-  }
-
-  // open details dialog
-  openCountryDetail(country: Country): void {
-    // Replace spaces with hyphens in the country name
-    const countryNameWithHyphen = country.name.common.replace(/ /g, '-');
-
-    this.store.dispatch(selectCountry({ countryName: country.name.common }));
-
-    // Navigate to the route
-    this.router.navigate(['/country', countryNameWithHyphen]).then(() => {
-      const dialogRef = this.dialog.open(CountryDetailComponent, {
-        width: '400px',
-        data: { country },
-      });
-
-      // After the dialog is closed, navigate to /
-      dialogRef.afterClosed().subscribe(() => {
-        this.router.navigate([''], {
-          queryParams: {},
-          queryParamsHandling: 'merge', // Merge to prevent overriding existing params
-        });
-      });
-    });
-  }
-  //  search function
-  onSearch(): void {
-    // Filter countries based on search term
-    this.filteredCountries$ = this.countryService.searchCountries(
-      this.searchTerm
+    this.filteredCountries$ = this.store.select(
+      selectFilteredCountries(this.searchTerm, this.searchBy)
     );
+
+    this.routeSub = this.route.paramMap
+      .pipe(
+        switchMap((params: Params) => {
+          const countryNameWithHyphen = params['get']('name');
+          if (countryNameWithHyphen) {
+            const countryName = countryNameWithHyphen.replace(/-/g, ' ');
+            return this.store.select(selectCountryByName(countryName)); // Use switchMap for a single subscription
+          }
+          return [];
+        })
+      )
+      .subscribe((country) => {
+        if (country) {
+          const dialogRef = this.dialog.open(CountryDetailComponent, {
+            width: '400px',
+            data: { country },
+          });
+
+          dialogRef.afterClosed().subscribe(() => {
+            this.router.navigate(['']);
+          });
+        }
+      });
+  }
+
+  // Open country detail dialog
+  openCountryDetailDialog(country: Country): void {
+    const countryNameWithHyphen = country.name.common.replace(/ /g, '-');
+    this.store.dispatch(selectCountry({ countryName: country.name.common }));
+    this.router.navigate(['/country', countryNameWithHyphen]).then(() => {});
+  }
+
+  // Trigger search
+  onSearch(): void {
+    if (this.searchBy === 'name') {
+      this.store.dispatch(
+        searchCountriesByName({ searchTerm: this.searchTerm })
+      );
+    } else {
+      this.store.dispatch(
+        searchCountriesByCapital({ searchTerm: this.searchTerm })
+      );
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up the subscription to avoid memory leaks
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 }

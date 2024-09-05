@@ -90,20 +90,16 @@ describe('HomeComponent', () => {
     const dialogSpy = jest.spyOn(dialog, 'open');
     const mockCountry = mockCountries[0];
 
-    component.openCountryDetail(mockCountry);
+    component.openCountryDetailDialog(mockCountry);
 
     expect(routerSpy).toHaveBeenCalledWith(['/country', 'Sierra-Leone']);
-    // expect(dialogSpy).toHaveBeenCalledWith(CountryDetailComponent, {
-    //   width: '400px',
-    //   data: { country: mockCountry }
-    // });
   });
 
   it('should navigate back and clear query params when dialog is closed', () => {
     const routerSpy = jest.spyOn(router, 'navigate');
     const mockCountry = mockCountries[0];
 
-    component.openCountryDetail(mockCountry);
+    component.openCountryDetailDialog(mockCountry);
 
     const dialogRef = dialog.open(CountryDetailComponent, {
       width: '400px',
@@ -112,7 +108,6 @@ describe('HomeComponent', () => {
     dialogRef.afterClosed().subscribe(() => {
       expect(routerSpy).toHaveBeenCalledWith([''], {
         queryParams: {},
-        queryParamsHandling: 'merge',
       });
     });
   });

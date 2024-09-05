@@ -4,39 +4,26 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { CountryService } from './country.service';
-import { Country, CountryDetail } from '../models/country.model';
+import { Country } from '../models/country.model';
 
 describe('CountryService', () => {
   let service: CountryService;
   let httpMock: HttpTestingController;
 
-  // Sample data
-  const mockCountry: Country | any = [
+  const mockCountries = [
     {
-      capital: 'Freetown',
-      continents: ['Africa'],
-      name: { common: 'Sierra Leone' },
-      officialLanguage: 'English',
-      population: 7976983,
-      region: 'Africa',
-      timeZones: ['GMT'],
-      timezone: 'GMT',
-      timezones: ['GMT'],
-      area: 71740,
-      currencies: [],
+      name: {
+        common: 'United States',
+      },
+      capital: ['Washington D.C.'],
+      population: 331000000,
     },
     {
-      capital: 'Freetown',
-      continents: ['Africa'],
-      name: { common: 'Sierra Leone' },
-      officialLanguage: 'English',
-      population: 7976983,
-      region: 'Africa',
-      timeZones: ['GMT'],
-      timezone: 'GMT',
-      timezones: ['GMT'],
-      area: 71740,
-      currencies: [],
+      name: {
+        common: 'Canada',
+      },
+      capital: ['Ottawa'],
+      population: 38000000,
     },
   ];
 
@@ -45,7 +32,6 @@ describe('CountryService', () => {
       imports: [HttpClientTestingModule],
       providers: [CountryService],
     });
-
     service = TestBed.inject(CountryService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -54,51 +40,85 @@ describe('CountryService', () => {
     httpMock.verify();
   });
 
-  it('should fetch all countries', () => {
-    service.getAllCountries().subscribe((countries) => {
-      expect(countries.length).toBe(2);
-      expect(countries).toEqual(mockCountry);
-    });
-
-    const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
-    expect(req.request.method).toBe('GET');
-    req.flush(mockCountry);
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
-  it('should find a country by name', () => {
-    service.getCountryByName('Sierra Leone').subscribe((country) => {
-      expect(country).toEqual(mockCountry[0]);
-    });
+  describe('getAllCountries', () => {
+    it('should return an Observable of all countries', () => {
+      service.getAllCountries().subscribe((countries) => {
+        expect(countries.length).toBe(2);
+        expect(countries).toEqual(mockCountries);
+      });
 
-    const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
-    req.flush(mockCountry);
+      const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCountries);
+    });
   });
 
-  it('should return null if country not found', () => {
-    service.getCountryByName('Nonexistent Country').subscribe((country) => {
-      expect(country).toBeNull();
+  describe('getCountryByName', () => {
+    it('should return the correct country by name', () => {
+      const countryName = 'United States';
+      service.getCountryByName(countryName).subscribe((country) => {
+        expect(country.name.common).toBe('United States');
+      });
+
+      const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCountries);
     });
 
-    const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
-    req.flush(mockCountry);
+    it('should return null if the country is not found', () => {
+      const countryName = 'Nonexistent Country';
+      service.getCountryByName(countryName).subscribe((country) => {
+        expect(country).toBeNull();
+      });
+
+      const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCountries);
+    });
   });
 
-  it('should filter countries based on search term', () => {
-    service.searchCountries('Sierra').subscribe((countries) => {
-      expect(countries.length).toBe(1);
-      expect(countries[0].name.common).toBe('Sierra Leone');
+  describe('searchCountries', () => {
+    it('should return countries by name if searchBy is "name"', () => {
+      const searchTerm = 'United States';
+      service.searchCountries(searchTerm, 'name').subscribe((countries) => {
+        expect(countries.length).toBe(1);
+        expect(countries[0].name.common).toBe('United States');
+      });
+
+      const req = httpMock.expectOne(
+        `https://restcountries.com/v3.1/name/${searchTerm}`
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush([mockCountries[0]]);
     });
 
-    const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
-    req.flush(mockCountry);
-  });
+    it('should return countries by capital if searchBy is "capital"', () => {
+      const searchTerm = 'Ottawa';
+      service.searchCountries(searchTerm, 'capital').subscribe((countries) => {
+        expect(countries.length).toBe(1);
+        expect(countries[0].name.common).toBe('Canada');
+      });
 
-  it('should return empty array if no countries match the search term', () => {
-    service.searchCountries('Nonexistent').subscribe((countries) => {
-      expect(countries.length).toBe(0);
+      const req = httpMock.expectOne(
+        `https://restcountries.com/v3.1/capital/${searchTerm}`
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush([mockCountries[1]]);
     });
 
-    const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
-    req.flush(mockCountry);
+    it('should return all countries if searchTerm is empty', () => {
+      service.searchCountries('', 'name').subscribe((countries) => {
+        expect(countries.length).toBe(2);
+        expect(countries).toEqual(mockCountries);
+      });
+
+      const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCountries);
+    });
   });
 });

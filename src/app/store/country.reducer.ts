@@ -1,26 +1,39 @@
 import { createReducer, on } from '@ngrx/store';
-import { loadCountriesSuccess, selectCountry } from './country.action';
+import {
+  loadCountriesSuccess,
+  searchCountriesByNameSuccess,
+  searchCountriesByCapitalSuccess,
+} from './country.action';
 import { Country } from '../models/country.model';
 
 export interface CountryState {
   countries: Country[];
-  selectedCountry: Country | null;
+  error: any;
 }
 
 export const initialState: CountryState = {
   countries: [],
-  selectedCountry: null,
+  error: null,
 };
 
 export const countryReducer = createReducer(
   initialState,
+  // Load all countries
   on(loadCountriesSuccess, (state, { countries }) => ({
     ...state,
-    countries,
+    countries: [...countries],
+    error: null,
   })),
-  on(selectCountry, (state, { countryName }) => ({
+  // Search countries by name
+  on(searchCountriesByNameSuccess, (state, { countries }) => ({
     ...state,
-    selectedCountry:
-      state.countries.find((country) => country.name === countryName) || null,
+    countries: [...countries],
+    error: null,
+  })),
+  // Search countries by capital
+  on(searchCountriesByCapitalSuccess, (state, { countries }) => ({
+    ...state,
+    countries: [...countries],
+    error: null,
   }))
 );

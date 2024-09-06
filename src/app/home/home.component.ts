@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Country } from '../models/country.model';
 import {
@@ -57,6 +57,8 @@ export class HomeComponent implements OnInit {
   ];
   searchBy: 'name' | 'capital' = 'name';
   routeSub: any;
+  isDialogOpen: boolean = false;
+  private dialogRef: MatDialogRef<CountryDetailComponent> | null = null;
 
   constructor(
     private store: Store,
@@ -66,9 +68,10 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Load countries from store
+    // Load countries from the store
     this.store.dispatch(loadCountries());
 
+    // Handle filtering logic
     this.filteredCountries$ = this.store.select(
       selectFilteredCountries(this.searchTerm, this.searchBy)
     );
@@ -79,30 +82,37 @@ export class HomeComponent implements OnInit {
           const countryNameWithHyphen = params['get']('name');
           if (countryNameWithHyphen) {
             const countryName = countryNameWithHyphen.replace(/-/g, ' ');
-            return this.store.select(selectCountryByName(countryName)); // Use switchMap for a single subscription
+            return this.store.select(selectCountryByName(countryName));
           }
           return [];
         })
       )
       .subscribe((country) => {
         if (country) {
-          const dialogRef = this.dialog.open(CountryDetailComponent, {
-            width: '400px',
-            data: { country },
-          });
-
-          dialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['']);
-          });
+          this.openDialog(country);
         }
       });
   }
+  openDialog(country: Country): void {
+    if (!this.dialogRef) {
+      this.dialogRef = this.dialog.open(CountryDetailComponent, {
+        width: '400px',
+        data: { country },
+      });
 
-  // Open country detail dialog
+      // Handle dialog close event
+      this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef = null;
+        this.router.navigate(['']);
+      });
+    }
+  }
+
+  // Open country detail dialog when clicking on a card
   openCountryDetailDialog(country: Country): void {
     const countryNameWithHyphen = country.name.common.replace(/ /g, '-');
     this.store.dispatch(selectCountry({ countryName: country.name.common }));
-    this.router.navigate(['/country', countryNameWithHyphen]).then(() => {});
+    this.router.navigate(['/country', countryNameWithHyphen]);
   }
 
   // Trigger search

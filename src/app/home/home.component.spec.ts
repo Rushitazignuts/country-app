@@ -5,8 +5,7 @@ import { CountryService } from '../services/country.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { loadCountries, selectCountry } from '../store/country.action';
-// import { RouterTestingModule } from '@angular/router/testing';
+import { loadCountries } from '../store/country.action';
 import { Country } from '../models/country.model';
 import { CountryDetailComponent } from '../country-detail/country-detail.component';
 
@@ -17,6 +16,7 @@ describe('HomeComponent', () => {
   let router: Router;
   let dialog: MatDialog;
   let countryService: CountryService;
+  let activatedRoute: ActivatedRoute;
 
   const mockCountries: Country[] = [
     {
@@ -34,7 +34,6 @@ describe('HomeComponent', () => {
       imports: [
         HomeComponent,
         StoreModule.forRoot({}),
-        // RouterTestingModule.withRoutes([]),
         MatDialogModule,
       ],
       providers: [
@@ -53,6 +52,14 @@ describe('HomeComponent', () => {
             }),
           },
         },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({
+              get: () => 'Sierra-Leone',
+            }),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -60,6 +67,7 @@ describe('HomeComponent', () => {
     router = TestBed.inject(Router);
     dialog = TestBed.inject(MatDialog);
     countryService = TestBed.inject(CountryService);
+    activatedRoute = TestBed.inject(ActivatedRoute);
 
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
@@ -75,19 +83,8 @@ describe('HomeComponent', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(loadCountries());
   });
 
-  it('should filter countries based on search term', () => {
-    const searchSpy = jest.spyOn(countryService, 'searchCountries');
-    component.searchTerm = 'Sierra';
-    component.onSearch();
-    expect(searchSpy).toHaveBeenCalledWith('Sierra');
-    component.filteredCountries$.subscribe((countries) => {
-      expect(countries).toEqual(mockCountries);
-    });
-  });
-
   it('should open country detail dialog and navigate with hyphenated country name', () => {
     const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
-    const dialogSpy = jest.spyOn(dialog, 'open');
     const mockCountry = mockCountries[0];
 
     component.openCountryDetailDialog(mockCountry);

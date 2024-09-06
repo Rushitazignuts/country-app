@@ -20,13 +20,8 @@ export const selectFilteredCountries = (
   searchTerm: string,
   searchBy: 'name' | 'capital'
 ) =>
-  createSelector(selectAllCountries, (countries) => {
+  createSelector(selectAllCountries, (countries: any) => {
     if (!searchTerm) {
       return countries;
     }
-    return countries.filter((country) =>
-      searchBy === 'name'
-        ? country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
-        : country.capital?.[0].toLowerCase().includes(searchTerm.toLowerCase())
-    );
   });

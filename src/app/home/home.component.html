@@ -1,16 +1,19 @@
 <div class="p-4  d-flex justify-content-between align-items-center">
     <!-- Toggle Between Name and Capital Search -->
     <div>
-        <mat-radio-group [(ngModel)]="searchBy" (change)="onSearch()">
-            <mat-radio-button value="name">Search by Name</mat-radio-button>
-            <mat-radio-button value="capital">Search by Capital</mat-radio-button>
-        </mat-radio-group>
+        <mat-form-field appearance="outline">
+            <mat-select [(ngModel)]="searchBy" (selectionChange)="onSearch()">
+                <mat-option value="name">Search by Name</mat-option>
+                <mat-option value="capital">Search by Capital</mat-option>
+                <mat-option value="region">Search by Region</mat-option>
+                <mat-option value="alpha">Search by Code</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
     <!-- search input field -->
     <div>
         <mat-form-field appearance="outline">
-            <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
-                placeholder="Search by name, capital...">
+            <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" [placeholder]="'Search by ' + searchBy">
         </mat-form-field>
     </div>
     <div>
@@ -34,6 +37,8 @@
                 <p><strong>Continent:</strong> {{ country.continents }}</p>
                 <p><strong>Population:</strong> {{ country.population }}</p>
                 <p><strong>Timezone:</strong> {{ country.timezones }}</p>
+                <p><strong>Code:</strong> {{ country.cca2 }}</p>
+
             </mat-card-content>
         </mat-card>
     </div>

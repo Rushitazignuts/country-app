@@ -60,7 +60,7 @@ describe('CountryService', () => {
   describe('getCountryByName', () => {
     it('should return the correct country by name', () => {
       const countryName = 'United States';
-      service.getCountryByName(countryName).subscribe((country) => {
+      service.getCountryByName(countryName).subscribe((country: any) => {
         expect(country.name.common).toBe('United States');
       });
 
@@ -71,7 +71,7 @@ describe('CountryService', () => {
 
     it('should return null if the country is not found', () => {
       const countryName = 'Nonexistent Country';
-      service.getCountryByName(countryName).subscribe((country) => {
+      service.getCountryByName(countryName).subscribe((country: any) => {
         expect(country).toBeNull();
       });
 

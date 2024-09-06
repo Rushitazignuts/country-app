@@ -3,6 +3,8 @@ import {
   loadCountriesSuccess,
   searchCountriesByNameSuccess,
   searchCountriesByCapitalSuccess,
+  searchCountriesByRegionSuccess,
+  searchCountriesByCodeSuccess,
 } from './country.action';
 import { Country } from '../models/country.model';
 
@@ -32,6 +34,18 @@ export const countryReducer = createReducer(
   })),
   // Search countries by capital
   on(searchCountriesByCapitalSuccess, (state, { countries }) => ({
+    ...state,
+    countries: [...countries],
+    error: null,
+  })),
+  // Search countries by region
+  on(searchCountriesByRegionSuccess, (state, { countries }) => ({
+    ...state,
+    countries: [...countries],
+    error: null,
+  })),
+  // Search countries by code
+  on(searchCountriesByCodeSuccess, (state, { countries }) => ({
     ...state,
     countries: [...countries],
     error: null,

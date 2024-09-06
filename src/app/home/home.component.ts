@@ -5,14 +5,15 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Country } from '../models/country.model';
 import {
-  loadCountries,
   selectCountry,
   searchCountriesByName,
   searchCountriesByCapital,
+  searchCountriesByRegion,
+  searchCountriesByCode,
+  loadCountries,
 } from '../store/country.action';
 import {
   selectAllCountries,
-  selectFilteredCountries,
   selectCountryByName,
 } from '../store/country.selector';
 import { CountryDetailComponent } from '../country-detail/country-detail.component';
@@ -24,7 +25,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -37,6 +38,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatSlideToggleModule,
     MatTableModule,
     MatRadioModule,
+    MatSelectModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
@@ -55,11 +57,10 @@ export class HomeComponent implements OnInit {
     'continents',
     'population',
   ];
-  searchBy: 'name' | 'capital' = 'name';
+  searchBy: 'name' | 'capital' | 'region' | 'alpha' = 'name';
   routeSub: any;
   isDialogOpen: boolean = false;
   private dialogRef: MatDialogRef<CountryDetailComponent> | null = null;
-
   constructor(
     private store: Store,
     private router: Router,
@@ -68,13 +69,9 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Load countries from the store
-    this.store.dispatch(loadCountries());
-
-    // Handle filtering logic
-    this.filteredCountries$ = this.store.select(
-      selectFilteredCountries(this.searchTerm, this.searchBy)
-    );
+    // this.route.data.subscribe((data) => {
+    //   // this.countries$ = data['countries'];
+    // });
 
     this.routeSub = this.route.paramMap
       .pipe(
@@ -99,7 +96,6 @@ export class HomeComponent implements OnInit {
         width: '400px',
         data: { country },
       });
-
       // Handle dialog close event
       this.dialogRef.afterClosed().subscribe(() => {
         this.dialogRef = null;
@@ -107,27 +103,40 @@ export class HomeComponent implements OnInit {
       });
     }
   }
-
   // Open country detail dialog when clicking on a card
   openCountryDetailDialog(country: Country): void {
     const countryNameWithHyphen = country.name.common.replace(/ /g, '-');
     this.store.dispatch(selectCountry({ countryName: country.name.common }));
     this.router.navigate(['/country', countryNameWithHyphen]);
   }
-
   // Trigger search
-  onSearch(): void {
-    if (this.searchBy === 'name') {
-      this.store.dispatch(
-        searchCountriesByName({ searchTerm: this.searchTerm })
-      );
-    } else {
-      this.store.dispatch(
-        searchCountriesByCapital({ searchTerm: this.searchTerm })
-      );
+  onSearch(): any {
+    
+    switch (this.searchBy) {
+      case 'name':
+        this.store.dispatch(
+          searchCountriesByName({ searchTerm: this.searchTerm })
+        );
+        break;
+      case 'capital':
+        this.store.dispatch(
+          searchCountriesByCapital({ searchTerm: this.searchTerm })
+        );
+        break;
+      case 'region':
+        this.store.dispatch(
+          searchCountriesByRegion({ searchTerm: this.searchTerm })
+        );
+        break;
+      case 'alpha':
+        this.store.dispatch(
+          searchCountriesByCode({ searchTerm: this.searchTerm })
+        );
+        break;
+      default:
+        break;
     }
   }
-
   ngOnDestroy(): void {
     // Clean up the subscription to avoid memory leaks
     if (this.routeSub) {

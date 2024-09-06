@@ -13,6 +13,12 @@ import {
   searchCountriesByCapital,
   searchCountriesByCapitalSuccess,
   searchCountriesByCapitalFailure,
+  searchCountriesByRegion,
+  searchCountriesByRegionSuccess,
+  searchCountriesByRegionFailure,
+  searchCountriesByCode,
+  searchCountriesByCodeSuccess,
+  searchCountriesByCodeFailure,
 } from './country.action';
 
 @Injectable()
@@ -51,6 +57,30 @@ export class CountryEffects {
         this.countryService.searchCountries(searchTerm, 'capital').pipe(
           map((countries) => searchCountriesByCapitalSuccess({ countries })),
           catchError((error) => of(searchCountriesByCapitalFailure({ error })))
+        )
+      )
+    )
+  );
+
+  searchCountriesByRegion$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchCountriesByRegion),
+      mergeMap(({ searchTerm }) =>
+        this.countryService.searchCountries(searchTerm, 'region').pipe(
+          map((countries) => searchCountriesByRegionSuccess({ countries })),
+          catchError((error) => of(searchCountriesByRegionFailure({ error })))
+        )
+      )
+    )
+  );
+
+  searchCountriesByCode$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchCountriesByCode),
+      mergeMap(({ searchTerm }) =>
+        this.countryService.searchCountries(searchTerm, 'alpha').pipe(
+          map((countries) => searchCountriesByCodeSuccess({ countries })),
+          catchError((error) => of(searchCountriesByCodeFailure({ error })))
         )
       )
     )

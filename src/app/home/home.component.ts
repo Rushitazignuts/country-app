@@ -10,7 +10,6 @@ import {
   searchCountriesByCapital,
   searchCountriesByRegion,
   searchCountriesByCode,
-  loadCountries,
 } from '../store/country.action';
 import {
   selectAllCountries,
@@ -26,6 +25,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { setLoadingSpinner } from '../store/shared/shared.action';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
     // this.route.data.subscribe((data) => {
     //   // this.countries$ = data['countries'];
     // });
-
+   this.store.dispatch(setLoadingSpinner({status: true}))
     this.routeSub = this.route.paramMap
       .pipe(
         switchMap((params: Params) => {

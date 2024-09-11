@@ -18,13 +18,16 @@ import { countryReducer } from './store/country.reducer';
 import { CountryEffects } from './store/country.effects';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { sharedReducer } from './store/shared/shared.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideStore({ countries: countryReducer }),
+    provideStore({
+       countries: countryReducer, 
+      shared: sharedReducer}),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEffects([CountryEffects]),
     provideHttpClient(),
@@ -32,7 +35,7 @@ export const appConfig: ApplicationConfig = {
       MatCardModule,
       MatDialogModule,
       MatFormFieldModule,
-      MatInputModule
+      MatInputModule,
     ),
   ],
 };

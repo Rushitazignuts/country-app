@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { CountryService } from '../services/country.service';
 import {
   loadCountries,
@@ -20,21 +20,24 @@ import {
   searchCountriesByCodeSuccess,
   searchCountriesByCodeFailure,
 } from './country.action';
+import { setLoadingSpinner } from './shared/shared.action';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class CountryEffects {
   // Effect to load all countries
   loadCountries$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(loadCountries),
-      mergeMap(() =>
-        this.countryService.getAllCountries().pipe(
-          map((countries) => loadCountriesSuccess({ countries })),
-          catchError((error) => of(loadCountriesFailure({ error })))
-        )
+  this.actions$.pipe(
+    ofType(loadCountries),
+    mergeMap(() =>
+      this.countryService.getAllCountries().pipe(
+        tap(() => this.store.dispatch(setLoadingSpinner({ status: false }))), 
+        map((countries) => loadCountriesSuccess({ countries })),             
+        catchError((error) => of(loadCountriesFailure({ error })))          
       )
     )
-  );
+  )
+);
 
   // Effect to search countries by name
   searchCountriesByName$ = createEffect(() =>
@@ -126,6 +129,7 @@ export class CountryEffects {
 
   constructor(
     private actions$: Actions,
-    private countryService: CountryService
+    private countryService: CountryService,
+    private store: Store
   ) {}
 }

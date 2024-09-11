@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Country } from '../models/country.model';
+import { Country, SearchByType } from '../models/country.model';
 import {
   selectCountry,
   searchCountriesByName,
@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
     'continents',
     'population',
   ];
-  searchBy: 'name' | 'capital' | 'region' | 'alpha' = 'name';
+  searchBy: SearchByType = 'name';
   routeSub: any;
   isDialogOpen: boolean = false;
   private dialogRef: MatDialogRef<CountryDetailComponent> | null = null;

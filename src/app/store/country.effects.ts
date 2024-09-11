@@ -40,12 +40,21 @@ export class CountryEffects {
   searchCountriesByName$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByName),
-      mergeMap(({ searchTerm }) =>
-        this.countryService.searchCountries(searchTerm, 'name').pipe(
-          map((countries) => searchCountriesByNameSuccess({ countries })),
-          catchError((error) => of(searchCountriesByNameFailure({ error })))
-        )
-      )
+      mergeMap(({ searchTerm }) => {
+        if (!searchTerm.trim()) {
+          // If search term is empty, return all countries
+          return this.countryService.getAllCountries().pipe(
+            map((countries) => searchCountriesByNameSuccess({ countries })),
+            catchError((error) => of(searchCountriesByNameFailure({ error })))
+          );
+        } else {
+          // If search term is not empty, search by name
+          return this.countryService.searchCountries(searchTerm, 'name').pipe(
+            map((countries) => searchCountriesByNameSuccess({ countries })),
+            catchError((error) => of(searchCountriesByNameFailure({ error })))
+          );
+        }
+      })
     )
   );
 
@@ -53,36 +62,65 @@ export class CountryEffects {
   searchCountriesByCapital$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByCapital),
-      mergeMap(({ searchTerm }) =>
-        this.countryService.searchCountries(searchTerm, 'capital').pipe(
-          map((countries) => searchCountriesByCapitalSuccess({ countries })),
-          catchError((error) => of(searchCountriesByCapitalFailure({ error })))
-        )
-      )
+      mergeMap(({ searchTerm }) => {
+        if (!searchTerm.trim()) {
+          return this.countryService.getAllCountries().pipe(
+            map((countries) => searchCountriesByCapitalSuccess({ countries })),
+            catchError((error) =>
+              of(searchCountriesByCapitalFailure({ error }))
+            )
+          );
+        } else {
+          return this.countryService
+            .searchCountries(searchTerm, 'capital')
+            .pipe(
+              map((countries) =>
+                searchCountriesByCapitalSuccess({ countries })
+              ),
+              catchError((error) =>
+                of(searchCountriesByCapitalFailure({ error }))
+              )
+            );
+        }
+      })
     )
   );
 
   searchCountriesByRegion$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByRegion),
-      mergeMap(({ searchTerm }) =>
-        this.countryService.searchCountries(searchTerm, 'region').pipe(
-          map((countries) => searchCountriesByRegionSuccess({ countries })),
-          catchError((error) => of(searchCountriesByRegionFailure({ error })))
-        )
-      )
+      mergeMap(({ searchTerm }) => {
+        if (!searchTerm.trim()) {
+          return this.countryService.getAllCountries().pipe(
+            map((countries) => searchCountriesByRegionSuccess({ countries })),
+            catchError((error) => of(searchCountriesByRegionFailure({ error })))
+          );
+        } else {
+          return this.countryService.searchCountries(searchTerm, 'region').pipe(
+            map((countries) => searchCountriesByRegionSuccess({ countries })),
+            catchError((error) => of(searchCountriesByRegionFailure({ error })))
+          );
+        }
+      })
     )
   );
 
   searchCountriesByCode$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByCode),
-      mergeMap(({ searchTerm }) =>
-        this.countryService.searchCountries(searchTerm, 'alpha').pipe(
-          map((countries) => searchCountriesByCodeSuccess({ countries })),
-          catchError((error) => of(searchCountriesByCodeFailure({ error })))
-        )
-      )
+      mergeMap(({ searchTerm }) => {
+        if (!searchTerm.trim()) {
+          return this.countryService.getAllCountries().pipe(
+            map((countries) => searchCountriesByCodeSuccess({ countries })),
+            catchError((error) => of(searchCountriesByCodeFailure({ error })))
+          );
+        } else {
+          return this.countryService.searchCountries(searchTerm, 'alpha').pipe(
+            map((countries) => searchCountriesByCodeSuccess({ countries })),
+            catchError((error) => of(searchCountriesByCodeFailure({ error })))
+          );
+        }
+      })
     )
   );
 

@@ -14,17 +14,6 @@ export class CountryDataResolver implements Resolve<Country[]> {
   constructor(private countryService: CountryService, private store: Store) {}
 
   resolve(): any {
-    // Fetch countries from the service
-    return this.countryService.getAllCountries().pipe(
-      tap((countries: Country[]) => {
-        if (countries.length > 0) {
-          this.store.dispatch(loadCountries());
-        }
-      }),
-      catchError((error) => {
-        console.error('Error loading countries', error);
-        return of([]);
-      })
-    );
+    this.store.dispatch(loadCountries());
   }
 }

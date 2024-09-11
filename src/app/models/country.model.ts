@@ -12,3 +12,5 @@ export interface CountryDetail extends Country {
   area: number;
   currencies: string[];
 }
+
+export type SearchByType = 'name' | 'capital' | 'region' | 'alpha';

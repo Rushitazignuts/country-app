@@ -25,10 +25,7 @@ export class CountryService {
     searchTerm: string,
     searchBy: 'name' | 'capital' | 'region' | 'alpha'
   ): Observable<Country[]> {
-    if (!searchTerm.trim()) {
-      return this.getAllCountries(); // Return all countries if the search term is empty
-    }
-
+  
     let searchUrl = '';
 
     // Use switch to handle different searchBy options

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { initialState, sharedState } from './shared.state';
+import { initialState } from './shared.state';
 import { setLoadingSpinner } from './shared.action';
 
 const _sharedReducer = createReducer(

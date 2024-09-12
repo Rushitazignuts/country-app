@@ -26,8 +26,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideStore({
-       countries: countryReducer, 
-      shared: sharedReducer}),
+      countries: countryReducer,
+      shared: sharedReducer,
+    }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEffects([CountryEffects]),
     provideHttpClient(),
@@ -35,7 +36,7 @@ export const appConfig: ApplicationConfig = {
       MatCardModule,
       MatDialogModule,
       MatFormFieldModule,
-      MatInputModule,
+      MatInputModule
     ),
   ],
 };

@@ -69,10 +69,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.route.data.subscribe((data) => {
-    //   // this.countries$ = data['countries'];
-    // });
-   this.store.dispatch(setLoadingSpinner({status: true}))
+    this.store.dispatch(setLoadingSpinner({ status: true }));
     this.routeSub = this.route.paramMap
       .pipe(
         switchMap((params: Params) => {
@@ -109,9 +106,8 @@ export class HomeComponent implements OnInit {
     this.store.dispatch(selectCountry({ countryName: country.name.common }));
     this.router.navigate(['/country', countryNameWithHyphen]);
   }
-  // Trigger search
+  // search
   onSearch(): any {
-    
     switch (this.searchBy) {
       case 'name':
         this.store.dispatch(
@@ -138,7 +134,7 @@ export class HomeComponent implements OnInit {
     }
   }
   ngOnDestroy(): void {
-    // Clean up the subscription to avoid memory leaks
+    // Clean  subscription
     if (this.routeSub) {
       this.routeSub.unsubscribe();
     }

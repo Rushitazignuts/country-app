@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, catchError, map } from 'rxjs';
-import { Country, CountryDetail } from '../models/country.model';
+import { Country } from '../models/country.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,8 +27,6 @@ export class CountryService {
   ): Observable<Country[]> {
   
     let searchUrl = '';
-
-    // Use switch to handle different searchBy options
     switch (searchBy) {
       case 'name':
         searchUrl = `${this.apiUrl}/name/${searchTerm}`;

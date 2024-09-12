@@ -6,17 +6,8 @@ import {
   searchCountriesByRegionSuccess,
   searchCountriesByCodeSuccess,
 } from './country.action';
-import { Country } from '../models/country.model';
+import { initialState } from './country.state';
 
-export interface CountryState {
-  countries: Country[];
-  error: any;
-}
-
-export const initialState: CountryState = {
-  countries: [],
-  error: null,
-};
 
 export const countryReducer = createReducer(
   initialState,

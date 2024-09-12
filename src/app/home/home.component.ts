@@ -117,7 +117,6 @@ export class HomeComponent implements OnInit {
     // debounce for search
     this.form.valueChanges
       .pipe(
-        tap(() => {}),
         filter(
           (formValue) =>
             (this.form.valid &&

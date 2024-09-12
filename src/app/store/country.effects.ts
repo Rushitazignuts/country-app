@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CountryService } from '../services/country.service';
 import {
   loadCountries,
@@ -19,8 +19,8 @@ import {
   searchCountriesByCode,
   searchCountriesByCodeSuccess,
   searchCountriesByCodeFailure,
+  setLoadingSpinner,
 } from './country.action';
-import { setLoadingSpinner } from './shared/shared.action';
 import { Store } from '@ngrx/store';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class CountryEffects {
   searchCountriesByName$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByName),
-      mergeMap(({ searchTerm }) => {
+      switchMap(({ searchTerm }) => {
         if (!searchTerm.trim()) {
           // If search term is empty, return all countries
           return this.countryService.getAllCountries().pipe(
@@ -65,7 +65,7 @@ export class CountryEffects {
   searchCountriesByCapital$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByCapital),
-      mergeMap(({ searchTerm }) => {
+      switchMap(({ searchTerm }) => {
         if (!searchTerm.trim()) {
           return this.countryService.getAllCountries().pipe(
             map((countries) => searchCountriesByCapitalSuccess({ countries })),
@@ -92,7 +92,7 @@ export class CountryEffects {
   searchCountriesByRegion$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByRegion),
-      mergeMap(({ searchTerm }) => {
+      switchMap(({ searchTerm }) => {
         if (!searchTerm.trim()) {
           return this.countryService.getAllCountries().pipe(
             map((countries) => searchCountriesByRegionSuccess({ countries })),
@@ -111,7 +111,7 @@ export class CountryEffects {
   searchCountriesByCode$ = createEffect(() =>
     this.actions$.pipe(
       ofType(searchCountriesByCode),
-      mergeMap(({ searchTerm }) => {
+      switchMap(({ searchTerm }) => {
         if (!searchTerm.trim()) {
           return this.countryService.getAllCountries().pipe(
             map((countries) => searchCountriesByCodeSuccess({ countries })),

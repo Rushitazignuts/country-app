@@ -18,7 +18,6 @@ import { countryReducer } from './store/country.reducer';
 import { CountryEffects } from './store/country.effects';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { sharedReducer } from './store/shared/shared.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideStore({
       countries: countryReducer,
-      shared: sharedReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEffects([CountryEffects]),

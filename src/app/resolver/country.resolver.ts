@@ -18,7 +18,7 @@ export class CountryResolver implements Resolve<CountryDetail | null> {
     if (countryName) {
       countryName = countryName.replace(/-/g, ' '); // Convert hyphen back to space
 
-      return this.countryService.getCountryByName(countryName);
+      return this.countryService.getAllCountries();
     } else {
       return of(null);
     }

@@ -26,6 +26,7 @@ describe('HomeComponent', () => {
       continents: ['Africa'],
       population: 7976983,
       timezones: ['GMT'],
+      cca2: 'GS'
     },
   ];
 

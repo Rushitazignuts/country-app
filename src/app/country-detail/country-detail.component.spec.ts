@@ -15,6 +15,7 @@ describe('CountryDetailComponent', () => {
     timezones: ['GMT'],
     area: 71740,
     currencies: [],
+    cca2: "GS"
   };
 
   it('should render country details correctly', async () => {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, catchError, map } from 'rxjs';
+import { Observable, of, catchError, throwError } from 'rxjs';
 import { Country } from '../models/country.model';
 
 @Injectable({
@@ -14,12 +14,12 @@ export class CountryService {
   getAllCountries() {
     const url = `${this.apiUrl}/all`;
 
-    return this.http.get<any>(url);
-  }
+    return this.http.get<any>(url).pipe(
+      catchError((error) => {
+        return throwError(() => console.log("error", error));
+      })); 
+   }
 
-  // Get specific country by name from the cached data
-  getCountryByName(name: string): any {
-  }
   // Search countries using different APIs (by name or capital)
   searchCountries(
     searchTerm: string,
@@ -47,8 +47,7 @@ export class CountryService {
 
     return this.http.get<Country[]>(searchUrl).pipe(
       catchError((error) => {
-        console.error('Search API failed', error);
-        return of([]);
+        return throwError(() => console.log("error", error));
       })
     );
   }

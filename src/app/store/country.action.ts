@@ -45,28 +45,33 @@ export const searchCountriesByCapitalFailure = createAction(
 
 // Search countries by region
 export const searchCountriesByRegion = createAction(
-    '[Country API] Search Countries By Region',
-    props<{ searchTerm: string }>()
-  );
-  export const searchCountriesByRegionSuccess = createAction(
-    '[Country API] Search Countries By Region Success',
-    props<{ countries: Country[] }>()
-  );
-  export const searchCountriesByRegionFailure = createAction(
-    '[Country API] Search Countries By Region Failure',
-    props<{ error: any }>()
-  );
+  '[Country API] Search Countries By Region',
+  props<{ searchTerm: string }>()
+);
+export const searchCountriesByRegionSuccess = createAction(
+  '[Country API] Search Countries By Region Success',
+  props<{ countries: Country[] }>()
+);
+export const searchCountriesByRegionFailure = createAction(
+  '[Country API] Search Countries By Region Failure',
+  props<{ error: any }>()
+);
 
-  // Search countries by code
+// Search countries by code
 export const searchCountriesByCode = createAction(
-    '[Country API] Search Countries By Alpha',
-    props<{ searchTerm: string }>()
-  );
-  export const searchCountriesByCodeSuccess = createAction(
-    '[Country API] Search Countries By Alpha Success',
-    props<{ countries: Country[] }>()
-  );
-  export const searchCountriesByCodeFailure = createAction(
-    '[Country API] Search Countries By Alpha Failure',
-    props<{ error: any }>()
-  );
+  '[Country API] Search Countries By Alpha',
+  props<{ searchTerm: string }>()
+);
+export const searchCountriesByCodeSuccess = createAction(
+  '[Country API] Search Countries By Alpha Success',
+  props<{ countries: Country[] }>()
+);
+export const searchCountriesByCodeFailure = createAction(
+  '[Country API] Search Countries By Alpha Failure',
+  props<{ error: any }>()
+);
+
+export const setLoadingSpinner = createAction(
+  '[SHARED STATE] set loading spinner',
+  props<{ status: boolean }>()
+);

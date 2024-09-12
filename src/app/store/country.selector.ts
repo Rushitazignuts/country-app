@@ -14,12 +14,8 @@ export const selectCountryByName = (countryName: string) =>
     countries.find((country) => country.name.common === countryName)
   );
 
-export const selectFilteredCountries = (
-  searchTerm: string,
-  searchBy: 'name' | 'capital'
-) =>
-  createSelector(selectAllCountries, (countries: any) => {
-    if (!searchTerm) {
-      return countries;
-    }
-  });
+  export const getLoading = createSelector
+  (selectCountryState,
+     (state: CountryState) => state.showLoader
+    );
+  
